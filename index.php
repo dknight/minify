@@ -1,7 +1,7 @@
 <?php
 /*
- * JS Minify - Frog CMS plugin
- 
+ * Minify - Frog CMS plugin
+ *
  * Copyright (c) 2009 Dmitri Smirnov
  *
  * Licensed under the MIT license:
@@ -26,6 +26,7 @@ require_once dirname(__FILE__) . '/JSMin.php';
 require_once dirname(__FILE__) . '/CSSMin.php';
 
 /**
+ *  Main class for minify
  *
  *  @author Dmitri Smirnov
  */
@@ -37,7 +38,9 @@ class Minify
      */
     private $type;
     
-    /*
+    /**
+     *  Factory method
+     *
      *  @param string JS|CSS
      *  @return Minify
      */
@@ -59,7 +62,6 @@ class Minify
     
     /**
      *  Loops through array files and minifies them.
-     *  NB! If you output to file, 
      *
      *  @param array Files array
      *  @param boolean Output to file?
@@ -81,27 +83,30 @@ class Minify
             if($this->type == 'JS') {
                 $min .= JSMin::minify($rawString);
             } elseif ($this->type == 'CSS') {
-                $min .= CSSMin::minify($rawString);
-            }
+               $min .= CSSMin::minify($rawString);
+	    } else {
+		throw new MinifyException('Unknow minify type use '
+		                         . '"CSS" or "JS"');
+	    }
         }
         if( !$output) {
             if ($this->type == 'JS') {
                 $retval = "<script type=\"text/javascript\">$min</script>\n";
             } else {
-                $retval = "<style type=\"text/css\">$min</style>";
+               $retval = "<style type=\"text/css\">$min</style>";
             }
         } else {
            /*
                TODO: Find a better way where to save automatically, 
-               and ingore permission  problem
+               and try to ingore permission problem.
            */
            if( ! is_file($globDir)) {
                throw new MinifyException("Output file $globDir "
-                                         . "does not exists");
+                                        . "does not exists");
            }
            if ( ! is_writable($globDir)) {
                throw new MinifyException("Output file $globDir is not "
-                                         . "writable, check persmissions");
+                                        . "writable, check persmissions");
            }
            
            file_put_contents($globDir, $min);
