@@ -15,7 +15,7 @@ Plugin::setInfos(array(
     'id'          => 'minify',
     'title'       => 'Minify', 
     'description' => 'Minifies and combines JavaScript and CSS', 
-    'version'     => '0.0.2',
+    'version'     => '0.0.3',
     'license'     => 'MIT',
     'author'      => 'Dmitri Smirnov',
     'update_url'  => 'http://www.dmitri.me/misc/frog-plugins.xml',
