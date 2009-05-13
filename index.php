@@ -22,6 +22,8 @@ Plugin::setInfos(array(
     'website'     => 'http://www.dmitri.me/'
 ));
 
+Plugin::addController('minify', 'Minify');
+
 require_once dirname(__FILE__) . '/JSMin.php';
 require_once dirname(__FILE__) . '/CSSMin.php';
 
@@ -37,6 +39,12 @@ class Minify
      *  @access private
      */
     private $type;
+    
+    /**
+     *  @var string
+     *  @access private
+     */
+    private $cache;
     
     /**
      *  Factory method
@@ -65,15 +73,19 @@ class Minify
      *
      *  @param array Files array
      *  @param boolean Output to file?
-     *  @param string Public path to file where minified data should be strored.
-     *         NB! don't forget to give write permissions.
      *
      *  @return string
      */
-    public function minify($files, $output = false, $filePath = '')
+    public function minify($files, $output = false, $fileName = '')
     {
-        $globDir = $_SERVER['DOCUMENT_ROOT'] . "/$filePath";
+        $globDir = $_SERVER['DOCUMENT_ROOT'] . '/cache/';
         $min = '';
+        if( ! $fileName && $this->type == 'CSS') {
+            $fileName = 'min.css';
+        }
+        if( ! $fileName && $this->type == 'JS') {
+            $fileName = 'min.js';
+        }
         
         foreach( $files as $file) {
             if( ! is_file($file)) {
@@ -81,37 +93,24 @@ class Minify
             }
             $rawString = file_get_contents($file);
             if($this->type == 'JS') {
+                $min .= sprintf("\n/*MD5:%s*/\n", md5($rawString));
                 $min .= JSMin::minify($rawString);
             } elseif ($this->type == 'CSS') {
+               $min .= sprintf("\n/*MD5:%s*/\n", md5($rawString));
                $min .= CSSMin::minify($rawString);
-	    } else {
-		throw new MinifyException('Unknow minify type use '
-		                         . '"CSS" or "JS"');
-	    }
-        }
-        if( !$output) {
-            if ($this->type == 'JS') {
-                $retval = "<script type=\"text/javascript\">$min</script>\n";
             } else {
-               $retval = "<style type=\"text/css\">$min</style>";
+               throw new MinifyException('Unknown minify type, use '
+                                        .'"CSS" or "JS"');
             }
-        } else {
-           /*
-               TODO: Find a better way where to save automatically, 
-               and try to ingore permission problem.
-           */
-           if( ! is_file($globDir)) {
-               throw new MinifyException("Output file $globDir "
-                                        . "does not exists");
-           }
-           if ( ! is_writable($globDir)) {
-               throw new MinifyException("Output file $globDir is not "
-                                        . "writable, check persmissions");
-           }
-           
-           file_put_contents($globDir, $min);
-           $retval = $filePath;
         }
+                
+        if( !$output) {
+           $retval = $min;
+        } else {
+          file_put_contents($globDir . $fileName, $min);
+          $retval = '/cache/' . $fileName;
+        }
+        
         return $retval;
     }
     
