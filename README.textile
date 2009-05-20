@@ -1,0 +1,70 @@
+h1. About
+
+'Minify' is a plugin to minify JavaScript and/or CSS code and combine it 
+into one file on the fly. This will increase performance of website.<br />
+So you don't need to do dozens HTTP request for every JavaScript or CSS file. Minify plugin is more
+useful and faster with <a href="http://www.appelsiini.net/projects/funky_cache">Funky cache</a>
+plugin.
+
+
+h1. Usage
+
+Install the minify plugin to your Frog CMS plugins directory:
+
+@
+$cd /path/to/frog/plugins/
+$git clone git://github.com/dknight/minify.git
+@
+
+h2. Activate minify plugin
+!src="http://www.dmitri.me/misc/minify.png"!
+
+h2. Set the settings in the
+
+So next step you need to create 'cache' directory in your document root and make it
+writable. Due to security settings most webservers doesn't allow you to create 
+directories dynamically, so you need to create it manually. Create it in your DOCUMENT_ROOT/cache/
+and set writtable permissions.
+
+@
+$mkdir /website/root/cache/
+$chmod 0666 /website/root/cache/
+@
+
+h2. Usage in Frog CMS
+
+@
+&lt;?php
+$jsFiles = array(
+    '/public/javascripts/jquery-1.3.2.min.js',
+    '/public/javascripts/jquery.validate.min.js',
+    '/public/javascripts/jquery.form.js',
+    '/public/javascripts/frog.js'
+);
+$cssFiles = array(
+    'path/to/master.css',
+    'path/to/subpage.css',
+    'path/to/ie-fix.css'
+);
+
+$js_minify  = Minify::factory('js');
+$css_minify = Minify::factory('css');
+?&gt;
+@
+
+HTML:
+
+@
+...
+&lt;link href="&lt;?php echo $css_minify->minify($cssFiles, true); ?&gt;" rel="stylesheet" type="text/css" /&gt;
+...
+&lt;script type="text/javascript" src="&lt;?php echo $js_minify->minify($files, true); ?&gt;">&lt;/script&gt;
+...
+@
+
+The 'minify' method can pass 3 parameters:
+
+|_. name |_. description |_. type |_. default |
+| files | File to be minified | array [required] | array() |
+| output | Output to file or raw output into string | boolean [optinal] | false |
+| fileName | Name of output file | string [optinal] | 'min.js' or 'min.css' |
