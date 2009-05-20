@@ -11,6 +11,8 @@
  *   http://www.dmitri.me/
  */
 
+require_once 'models/MinifyPage.php';
+
 Plugin::setInfos(array(
     'id'          => 'minify',
     'title'       => 'Minify',
@@ -22,102 +24,21 @@ Plugin::setInfos(array(
     'website'     => 'http://www.dmitri.me/'
 ));
 
+AutoLoader::addFolder(dirname(__FILE__) . '/lib');
+
 Plugin::addController('minify', 'Minify', '', false);
 
-require_once dirname(__FILE__) . '/JSMin.php';
-require_once dirname(__FILE__) . '/CSSMin.php';
+Observer::observe('page_found', 'minify_grab');
 
-/**
- *  Main class for minify
- *
- *  @author Dmitri Smirnov
- */
-class Minify
+function minify_grab($page)
 {
-    /**
-     *  @var string
-     *  @access private
-     */
-    private $type;
+    //$output = MinifyPage::content($page);
     
-    /**
-     *  @var string
-     *  @access private
-     */
-    private $cache;
+    //$cssFiles = array();
+    //$jsFiles  = array();
     
-    /**
-     *  Factory method
-     *
-     *  @param string JS|CSS
-     *  @return Minify
-     */
-    public static function factory($type)
-    {
-        $type = strtoupper($type);
-        return new Minify($type);
-    }
+    //preg_match_all('/(src=)(\'|\")(.+?)\.js(\'|\")/i', $output, $matches);
+    //print_r($matches[3][0] . '.js');
     
-    /**
-     *  Constructor
-     *  @param string JS|CSS
-     */
-    public function __construct($type)
-    {
-        $type = strtoupper($type);
-        $this->type = $type;
-    }
-    
-    /**
-     *  Loops through array files and minifies them.
-     *
-     *  @param array Files array
-     *  @param boolean Output to file?
-     *
-     *  @return string
-     */
-    public function minify($files, $output = false, $fileName = '')
-    {
-        $globDir = $_SERVER['DOCUMENT_ROOT'] . '/cache/';
-        $min = '';
-        if( ! $fileName && $this->type == 'CSS') {
-            $fileName = 'min.css';
-        }
-        if( ! $fileName && $this->type == 'JS') {
-            $fileName = 'min.js';
-        }
-        
-        foreach( $files as $file) {
-            if( ! is_file($file)) {
-                throw new MinifyException("File $file - not found");
-            }
-            $rawString = file_get_contents($file);
-            if($this->type == 'JS') {
-                $min .= sprintf("\n/*MD5:%s*/\n", md5($rawString));
-                $min .= JSMin::minify($rawString);
-            } elseif ($this->type == 'CSS') {
-               $min .= sprintf("\n/*MD5:%s*/\n", md5($rawString));
-               $min .= CSSMin::minify($rawString);
-            } else {
-               throw new MinifyException('Unknown minify type, use '
-                                        .'"CSS" or "JS"');
-            }
-        }
-                
-        if( !$output) {
-           $retval = $min;
-        } else {
-          file_put_contents($globDir . $fileName, $min);
-          $retval = '/cache/' . $fileName;
-        }
-        
-        return $retval;
-    }
-    
+    //exit();
 }
-/**
- *  Minify exception
- */
-class MinifyException extends Exception {}
-
-    
