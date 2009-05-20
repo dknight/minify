@@ -13,16 +13,16 @@
 
 Plugin::setInfos(array(
     'id'          => 'minify',
-    'title'       => 'Minify', 
+    'title'       => 'Minify',
     'description' => 'Minifies and combines JavaScript and CSS', 
-    'version'     => '0.1.0',
+    'version'     => '0.1.1',
     'license'     => 'MIT',
     'author'      => 'Dmitri Smirnov',
     'update_url'  => 'http://www.dmitri.me/misc/frog-plugins.xml',
     'website'     => 'http://www.dmitri.me/'
 ));
 
-Plugin::addController('minify', 'Minify');
+Plugin::addController('minify', 'Minify', '', false);
 
 require_once dirname(__FILE__) . '/JSMin.php';
 require_once dirname(__FILE__) . '/CSSMin.php';

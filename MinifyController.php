@@ -21,23 +21,11 @@ class MinifyController extends PluginController
         }
         
         $this->setLayout('backend');
-        $this->assignToLayout('sidebar',
-                              new View('../../plugins/minify/views/sidebar'));
-    }
-
-    function index()
-    {
-        $this->display('minify/views/index');
     }
     
-    function addCacheDir()
+    function documentation()
     {
-        $path = FROG_ROOT . '/cache/';
-        @mkdir($path);
-        @chmod($path, 0777);
-        $this->display('minify/views/index',
-                       array('failed' => 'Failed to create /cache/ direcory and'
-                                       . ' give to it appropriate persmissions.'
-                                       . 'Try to do it mannualy.'));
+        $this->display('minify/views/documentation');
     }
+    
 }
