@@ -5,7 +5,8 @@
   into one file on the fly. This will increase performance of website.<br />
   So you don't need to do dozens HTTP request for every JavaScript or CSS file. Minify plugin is more
   useful and faster with <a href="http://www.appelsiini.net/projects/funky_cache">Funky cache</a>
-  plugin.
+  plugin.<br />
+  <a href="http://www.dmitri.me/blog/plugin-minify-for-frog-cmsplugin-minify-for-frog-cms/">Project homepage</a>.
 </p>
 
 <h1>Usage</h1>
@@ -19,14 +20,15 @@ $git clone git://github.com/dknight/minify.git
 </pre>
 </code>
 
-<h2>Activate minify plugin</h2>
+<h3>Activate minify plugin</h3>
 <img src="http://www.dmitri.me/misc/minify.png" alt="" />
-<h2>Set the settings in the</h2>
-
+<h3>Set the settings in the</h3>
+<p>
 So next step you need to create 'cache' directory in your document root and make it
 writable. Due to security settings most webservers doesn't allow you to create 
 directories dynamically, so you need to create it manually. Create it in your DOCUMENT_ROOT/cache/
-and set writtable permissions.<br /><br />
+and set writtable permissions.
+</p>
 <code>
 <pre>
 $mkdir /website/root/cache/
@@ -50,7 +52,7 @@ if( !is_dir($cacheDir)) {
 echo "<span style='color:$color;font-weight:bold;'>$text!</span>";
 ?>
 </p>
-<h2>Usage in Frog CMS</h2>
+<h3>Usage in Frog CMS</h3>
 
 <code>
 <pre>
